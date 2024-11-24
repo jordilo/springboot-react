@@ -3,12 +3,14 @@ package com.tecnocampus.agile.users.api;
 import com.tecnocampus.agile.users.model.User;
 import com.tecnocampus.agile.users.model.UserList;
 import com.tecnocampus.agile.users.service.UsersService;
+import com.tecnocampus.agile.utils.Pagination;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+
+import java.util.Optional;
 
 @RestController()
 @RequestMapping(path = "api/users")
@@ -23,9 +25,9 @@ public class UsersController {
     }
 
     @GetMapping("")
-    public ResponseEntity<List<UserList>> get(@RequestParam int page, @RequestParam int size) {
+    public ResponseEntity<Pagination<UserList>> get(@RequestParam Optional<Integer> page, @RequestParam Optional<Integer> size) {
         try {
-            Pageable pagination = PageRequest.of(page, size);
+            Pageable pagination = PageRequest.of(page.orElse(0), size.orElse(2));
             return ResponseEntity.ok(usersService.getAllUsersShort(pagination));
         } catch (Exception e) {
 

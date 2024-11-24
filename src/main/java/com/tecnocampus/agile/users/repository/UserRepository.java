@@ -12,4 +12,5 @@ public interface UserRepository extends MongoRepository<User, String> {
     List<UserList> findAllProjectedBy(Pageable pageable);
 
     User findUserById(String id);
+
 }

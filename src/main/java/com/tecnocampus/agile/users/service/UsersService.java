@@ -3,11 +3,9 @@ package com.tecnocampus.agile.users.service;
 import com.tecnocampus.agile.users.model.User;
 import com.tecnocampus.agile.users.model.UserList;
 import com.tecnocampus.agile.users.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.tecnocampus.agile.utils.Pagination;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class UsersService {
@@ -18,8 +16,15 @@ public class UsersService {
         this.userRepository = userRepository;
     }
 
-    public List<UserList> getAllUsersShort(Pageable pagination) {
-        return userRepository.findAllProjectedBy(pagination);
+    public Pagination<UserList> getAllUsersShort(Pageable pagination) {
+        var items = userRepository.findAllProjectedBy(pagination);
+        var totalItems = userRepository.count();
+        return Pagination.<UserList>builder()
+                .pageSize(pagination.getPageSize())
+                .currentPage(pagination.getPageNumber())
+                .totalItems((int) totalItems)
+                .items(items)
+                .build();
     }
 
 

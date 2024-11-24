@@ -47,6 +47,16 @@ export interface components {
             email: string;
             avatar?: string;
         };
+        PaginationUserList: {
+            items: components["schemas"]["UserList"][];
+            /** Format: int32 */
+            currentPage: number;
+            /** Format: int32 */
+            totalItems: number;
+            /** Format: int32 */
+            pageSize: number;
+            lastPage?: boolean;
+        };
         UserList: {
             id?: string;
             username?: string;
@@ -110,9 +120,9 @@ export interface operations {
     };
     get: {
         parameters: {
-            query: {
-                page: number;
-                size: number;
+            query?: {
+                page?: number;
+                size?: number;
             };
             header?: never;
             path?: never;
@@ -126,7 +136,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["UserList"][];
+                    "*/*": components["schemas"]["PaginationUserList"];
                 };
             };
         };
