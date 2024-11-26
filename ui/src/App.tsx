@@ -2,21 +2,29 @@ import {useEffect, useState} from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
-import {EntityLoad, Pagination, UserList} from "./types.ts";
+import {EntityLoad,} from "./types.ts";
+import {getAllUsers, PaginationUserList} from "./models";
 
 
 function App() {
     const size = 3;
     const [page, setPage] = useState(0)
-    const [usersList, setUsersList] = useState<EntityLoad<Pagination<UserList>>>({status: 'loading'});
+    const [usersList, setUsersList] = useState<EntityLoad<PaginationUserList>>({status: 'loading'});
 
     useEffect(() => {
-        const urlParamsString = [['page', page.toString()], ['size', size.toString()]];
-        fetch('http://localhost:8080/api/users?' + new URLSearchParams(urlParamsString).toString())
-            .then(response => response.json() as Promise<Pagination<UserList>>)
-            .then(data => setUsersList({status: 'success', data}))
-            .catch(_ => setUsersList({status: 'error'}));
-    }, [size, page])
+            getAllUsers({query: {page, size}})
+                .then(res => {
+                    if (res.data) {
+                        setUsersList({status: 'success', data: res.data});
+                    } else {
+                        setUsersList({status: 'error'});
+                    }
+                })
+                .catch(_ => setUsersList({status: 'error'}));
+
+        },
+        [size, page]
+    )
 
     return (
         <>
@@ -32,14 +40,14 @@ function App() {
             <div className="card">
                 {usersList.status === 'loading' && <p>Loading...</p>}
                 <ul>
-                    {usersList.status === 'success' && usersList.data.items.map((user) => <li>{user.username}</li>)}
+                    {usersList.status === 'success' && usersList.data?.items.map((user) => <li>{user.username}</li>)}
                 </ul>
 
                 <button disabled={page <= 0} onClick={() => setPage((pagination) => --pagination)}>
                     Previous Page
                 </button>
                 <span>Current page {page + 1}</span>
-                <button disabled={usersList.status === 'success' && usersList.data.lastPage}
+                <button disabled={usersList.status === 'success' && usersList.data?.lastPage}
                         onClick={() => setPage((pagination) => ++pagination)}>
                     Next Page
                 </button>

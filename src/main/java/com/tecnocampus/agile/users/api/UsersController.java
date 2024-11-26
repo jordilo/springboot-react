@@ -25,7 +25,7 @@ public class UsersController {
     }
 
     @GetMapping("")
-    public ResponseEntity<Pagination<UserList>> get(@RequestParam Optional<Integer> page, @RequestParam Optional<Integer> size) {
+    public ResponseEntity<Pagination<UserList>> getAllUsers(@RequestParam Optional<Integer> page, @RequestParam Optional<Integer> size) {
         try {
             Pageable pagination = PageRequest.of(page.orElse(0), size.orElse(2));
             return ResponseEntity.ok(usersService.getAllUsersShort(pagination));
